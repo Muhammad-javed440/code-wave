@@ -19,7 +19,7 @@ const summaries = [
     title: "Video Editing",
     heading: "🎬 The Art of Video Editing: A Beginner’s Guide",
     content: `Video editing is the process of manipulating and rearranging video footage...`,
-    imageUrl: "https://media.istockphoto.com/id/2124050589/photo/digital-chatbot-and-artificial-intelligence-technology-for-business-robot-applications-and.jpg?s=612x612&w=0&k=20&c=09GNnzt_FgYd4n3dQLdU1eZA686vThU1yMDB7VMjQcY=",
+    imageUrl: "/ai.jpg",
   },
   {
     title: "AI in Healthcare",
@@ -31,7 +31,7 @@ const summaries = [
     title: "Sustainable Tech",
     heading: "Sustainable Technology: Innovations for a Greener Future",
     content: `Sustainable technology refers to innovations that aim to reduce environmental impact...`,
-    imageUrl: "https://media.istockphoto.com/id/1452604857/photo/businessman-touching-the-brain-working-of-artificial-intelligence-automation-predictive.jpg?s=2048x2048&w=is&k=20&c=-dkoxqirWcLDhkIjVgkLfRXdNHqCJdPKswM7tkjTcN0="
+    imageUrl: "/5GTechnology.jpg"
   },
   {
     title: "Cybersecurity",
