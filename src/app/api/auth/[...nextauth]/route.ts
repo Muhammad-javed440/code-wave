@@ -8,10 +8,20 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,  // Add this for security
+
+  pages: {
+    signIn: "/auth/signin", // custom sign in page
+    // you can also specify `redirect` logic after login in callbacks
+  },
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Always redirect to dashboard after sign in
+      return `${baseUrl}/dashboard`;
+    },
+  },
+
+  secret: process.env.NEXTAUTH_SECRET, // Add this for security
 });
 
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 
 export { handler as GET, handler as POST };
