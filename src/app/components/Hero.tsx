@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 function Hero() {
   return (
@@ -21,11 +22,15 @@ function Hero() {
         effective — so you can focus on running your business.
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
+        <Link href="/signin">
         <button className="text-white bg-indigo-500 hover:bg-indigo-600 px-6 py-2 rounded-lg text-lg">
-          Button
+          Login
         </button>
+        </Link>
         <button className="text-gray-700 bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-lg text-lg">
-          Button
+          <Link href="/sign-up">
+            Sign Up
+          </Link>
         </button>
       </div>
     </div>
@@ -35,7 +40,7 @@ function Hero() {
       <Image
         className="object-cover rounded-lg max-w-full h-auto"
         alt="hero"
-        src="/ai.jpg"
+        src="/hero.jpg"
         width={500}
         height={300}
         priority

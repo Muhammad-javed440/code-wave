@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -104,7 +105,7 @@ function LoginComponent() {
           <Button
             variant="outline"
             className="w-full flex justify-center items-center py-3 rounded-md bg-black text-white hover:bg-indigo-800 transition"
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: '/dashboard' })}
           >
             Login with Google
           </Button>
