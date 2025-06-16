@@ -1,24 +1,25 @@
 import React from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 const Footer = () => {
   return (
     <footer className="text-gray-600 body-font">
   <div className="container px-5 py-8 mx-auto flex flex-col sm:flex-row items-center">
-    <a className="flex title-font font-medium items-center text-gray-900 mb-4 sm:mb-0 sm:justify-start justify-center w-full sm:w-auto">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        className="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"
-        viewBox="0 0 24 24"
-      >
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-      <span className="ml-3 text-xl">CodeWave</span>
-    </a>
+    
+    <div className="flex items-center gap-3">
+              <Image
+                src="/logo.jpg"
+                alt="CodeWave AI Logo"
+                width={40}
+                height={40}
+                className="rounded-full"
+                priority
+              />
+              <Link href="/" className="text-2xl font-semibold text-gray-900">
+                CodeWave AI
+              </Link>
+            </div>
 
     <p className="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4 w-full sm:w-auto text-center sm:text-left">
       © 2025 CodeWave —
