@@ -10,18 +10,22 @@ const handler = NextAuth({
   ],
 
   pages: {
-    signIn: "/auth/signin", // custom sign in page
-    // you can also specify `redirect` logic after login in callbacks
+    signIn: "/auth/signin", // custom sign-in page
   },
+
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // Always redirect to dashboard after sign in
+      // If redirecting to /admin, allow it
+      if (url.includes("/admin")) {
+        return `${baseUrl}/admin`;
+      }
+
+      // Default redirect to /dashboard
       return `${baseUrl}/dashboard`;
     },
   },
 
-  secret: process.env.NEXTAUTH_SECRET, // Add this for security
+  secret: process.env.NEXTAUTH_SECRET,
 });
-
 
 export { handler as GET, handler as POST };
