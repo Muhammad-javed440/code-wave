@@ -21,14 +21,7 @@ function Hero() {
         AI-powered solutions make everything easier, faster, and more
         effective — so you can focus on running your business.
       </p>
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Link href="/signin">
-        <button className="text-white bg-indigo-500 hover:bg-indigo-600 px-6 py-2 rounded-lg text-lg">
-          Login
-        </button>
-        </Link>
-       
-      </div>
+      
     </div>
 
     {/* Image */}
