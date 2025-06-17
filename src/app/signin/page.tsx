@@ -120,7 +120,7 @@ function LoginComponent() {
         </div>
         <div className="mt-6">
             <Button
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => signOut({ callbackUrl: "/login" })}
               className="w-full bg-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-800"
             >
                Logout
