@@ -10,18 +10,16 @@ const handler = NextAuth({
   ],
 
   pages: {
-    signIn: "/auth/signin", // custom sign-in page
+    signIn: "/auth/signin",   // custom sign-in page
+    signOut: "/",             // redirect to homepage after sign-out
   },
 
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // If redirecting to /admin, allow it
       if (url.includes("/admin")) {
         return `${baseUrl}/admin`;
       }
-
-      // Default redirect to /dashboard
-      return `${baseUrl}/dashboard`;
+      return `${baseUrl}/dashboard`;  // default after sign-in
     },
   },
 
