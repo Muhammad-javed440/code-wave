@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 
 
-function Dashboard() {
+function HeroDashboard() {
   return (
    <section className="text-gray-600 bg-white body-font">
   <div className="container mx-auto flex flex-col-reverse md:flex-row items-center px-4 py-10 md:py-20">
@@ -42,4 +42,4 @@ function Dashboard() {
   );
 }
 
-export default  Dashboard;
+export default   HeroDashboard;

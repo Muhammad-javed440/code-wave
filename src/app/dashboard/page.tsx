@@ -1,12 +1,16 @@
-import React from 'react'
-import Dashboard from '../components/Dashboard'
+import React from "react";
+import Image from "next/image";
+import HeroDashboard from "../components/HeroDashboard";
+
 
 function page() {
   return (
-    <div>
-      <Dashboard />
-    </div>
-  )
+<div>
+  <HeroDashboard/>
+</div>
+
+     
+  );
 }
 
-export default page
+export default  page;
