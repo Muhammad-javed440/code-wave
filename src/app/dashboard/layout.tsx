@@ -1,6 +1,8 @@
+import React from "react";
 import Footer from "../components/Footer";
-import Hero from "../components/Hero";
+
 import Navbar from "../components/Navbar";
+
 
 
 export default function DashboardLayout({
@@ -10,8 +12,11 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Navbar with its children */}
+      
+    
       <Navbar />
-      <Hero />
+     
       <main className="flex-grow">{children}</main>
       <Footer />
     </div>
