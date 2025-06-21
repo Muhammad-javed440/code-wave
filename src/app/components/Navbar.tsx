@@ -39,7 +39,7 @@ const Navbar = () => {
             isOpen ? 'flex' : 'hidden md:flex'
           }`}
         >
-          <Link href="/dashboard" className="hover:text-gray-900">
+          <Link href="../dashboard" className="hover:text-gray-900">
             Home
           </Link>
           <Link href="/about" className="hover:text-gray-900">
