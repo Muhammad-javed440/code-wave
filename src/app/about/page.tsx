@@ -36,7 +36,7 @@ const page = () => {
           {
             name: "Noor Fatima",
             role: "Social Media Marketing Manager",
-            imgSrc: "/girl2.jpeg",
+            imgSrc: "/girl1.jpg",
             description: `A Social Media Marketing Manager is responsible for growing a brands presence on social platforms like Instagram, Facebook, LinkedIn, Twitter (X), and TikTok. Their main goal is to attract followers, increase engagement, and turn viewers into customers.`,
           },
         ].map(({name, role, imgSrc, description}, idx) => (
