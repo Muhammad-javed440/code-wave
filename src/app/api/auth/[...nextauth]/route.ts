@@ -1,59 +1,64 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaClient } from "@prisma/client/extension";
+import bcrypt from "bcryptjs";
+
+const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
-    // Google login
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
 
-    // Custom credentials login
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Replace this logic with real DB check
-        const user = {
-          id: "1",
-          name: "Admin User",
-          username: "admin",
-          password: "admin123", // ❗ Never hardcode in real projects
-        };
-
-        if (
-          credentials?.username === user.username &&
-          credentials?.password === user.password
-        ) {
-          return user; // ✅ success → user redirected to /dashboard
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing email or password");
         }
 
-        return null; // ❌ failure → res?.error will be set
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user || !user.password) {
+          throw new Error("Invalid credentials");
+        }
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) {
+          throw new Error("Invalid credentials");
+        }
+
+        // Return a user object
+        return {
+          id: user.id,
+          email: user.email,
+        };
       },
     }),
   ],
 
   pages: {
-    signIn: "/auth/signin", // your custom login route
-    signOut: "/",           // where to go after sign-out
-  },
-
-  callbacks: {
-    async redirect({ url, baseUrl }) {
-      if (url.includes("/admin")) {
-        return `${baseUrl}/admin`;
-      }
-      return `${baseUrl}/dashboard`; // ✅ default after login
-    },
+    signIn: "/auth/signin",
+    signOut: "/",
   },
 
   session: {
     strategy: "jwt",
+  },
+
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
+    },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
