@@ -26,11 +26,16 @@ const Name = () => {
           </Link>
         </div>
 
-        {/* Desktop Login Button */}
+        {/* Desktop Buttons */}
         <div className="hidden md:flex gap-4">
-          <Link href="/signin">
+          <Link href="/auth/signin">
             <button className="text-white bg-indigo-500 hover:bg-indigo-600 px-6 py-2 rounded-lg text-lg">
               Login
+            </button>
+          </Link>
+          <Link href="/auth/signup">
+            <button className="text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-6 py-2 rounded-lg text-lg">
+              Sign Up
             </button>
           </Link>
         </div>
@@ -45,10 +50,15 @@ const Name = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden px-6 pb-4">
-          <Link href="/signin">
+        <div className="md:hidden px-6 pb-4 flex flex-col gap-3">
+          <Link href="/auth/signin">
             <button className="w-full text-white bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg text-base">
               Login
+            </button>
+          </Link>
+          <Link href="/auth/signup">
+            <button className="w-full text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-4 py-2 rounded-lg text-base">
+              Sign Up
             </button>
           </Link>
         </div>
