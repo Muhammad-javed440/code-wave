@@ -31,7 +31,7 @@ function LoginComponent() {
 
   const onSubmit = async (data: LoginFormInputs) => {
     const res = await signIn("credentials", {
-      redirect: false,
+      redirect: true,
       username: data.username,
       password: data.password,
     });

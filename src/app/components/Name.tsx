@@ -33,7 +33,7 @@ const Name = () => {
               Login
             </button>
           </Link>
-          <Link href="/signup">
+          <Link href="/sign-up">
             <button className="text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-6 py-2 rounded-lg text-lg">
               Sign Up
             </button>
@@ -56,7 +56,7 @@ const Name = () => {
               Login
             </button>
           </Link>
-          <Link href="/signup">
+          <Link href="/sign-up">
             <button className="w-full text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-4 py-2 rounded-lg text-base">
               Sign Up
             </button>
