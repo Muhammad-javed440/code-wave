@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       data: {
         email,
         password: hashedPassword,
+         role: "user", // Default role, can be changed later
       },
     });
 

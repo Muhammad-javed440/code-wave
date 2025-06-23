@@ -1,10 +1,50 @@
 "use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function PasswordReset() {
-  const handleEmailConfirmation = () => {};
-  const handleSignIn = () => {};
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  // Handle email confirmation (simulate or connect to your backend API)
+  const handleEmailConfirmation = async () => {
+    if (!email) {
+      alert("Please enter a valid email.");
+      return;
+    }
+
+    try {
+      // Simulate API request for password reset
+      const res = await fetch("/api/auth/request-password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        alert("Password reset email sent.");
+        router.push("/verify-email");
+      } else {
+        alert("Failed to send reset email.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+    }
+  };
+
+  // Handle sign in with Google
+  const handleSignIn = async () => {
+    try {
+      await signIn("google", { callbackUrl: "/dashboard" }); // redirect after login
+    } catch (err) {
+      console.error(err);
+      alert("Google sign-in failed.");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
@@ -22,31 +62,32 @@ function PasswordReset() {
         <input
           id="email"
           type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-3 border border-slate-200 rounded text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter Email Address"
           required
         />
-        <Link href="/verify-email">
+
         <button
           onClick={handleEmailConfirmation}
           className="w-full mt-6 bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition-colors"
         >
           Confirm Email
         </button>
-        </Link>
+
         <div className="my-6 h-px bg-zinc-200" />
 
         <p className="text-center text-sm text-gray-500">
           Remember your Password?
         </p>
-        <Link href="/login">
+
         <button
           onClick={handleSignIn}
           className="w-full mt-4 py-3 border border-zinc-200 text-blue-600 rounded hover:bg-gray-50 transition-colors"
         >
-          Back to Sign In
+          Sign in with Google
         </button>
-        </Link>
       </div>
     </div>
   );
