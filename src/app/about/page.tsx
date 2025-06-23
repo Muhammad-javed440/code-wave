@@ -1,8 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
+import Navbar from '../components/Navbar'
 const page = () => {
   return (
 <div className="">
+  <Navbar/>
   <section className="text-gray-900 bg-white body-font">
     <div className="container px-5 py-24 mx-auto max-w-7xl">
       <div className="flex flex-col text-center w-full mb-20">

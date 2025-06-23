@@ -1,15 +1,15 @@
 import React from "react";
 import Hero from "./components/Hero";
 import Name from "./components/Name";
-import Footer from "./components/Footer";
-
+import VantaBackground from "@/components/VantaBackground";
 export default function Home() {
   return (
-   <div>
-   <Name/>
-   <Hero/>
-   <Footer/>
-
-   </div>
+    <div className="relative min-h-screen">
+    
+      <div className="relative z-10">
+        <Name/>
+        <Hero/>
+      </div>
+    </div>
   );
 }

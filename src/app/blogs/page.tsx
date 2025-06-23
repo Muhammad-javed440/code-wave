@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-
+import Navbar from "../components/Navbar";
 const summaries = [
   {
     title: "Agentic AI",
@@ -104,7 +104,10 @@ const Page = () => {
   };
 
   return (
+    <div>
+      <Navbar/>
     <section className="text-gray-600 body-font">
+
       <div className="container px-5 py-24 mx-auto">
         <div className="flex flex-wrap -m-4">
           {summaries.map((item, index) => (
@@ -144,6 +147,7 @@ const Page = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 
