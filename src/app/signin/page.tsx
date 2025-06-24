@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 type LoginFormInputs = {
@@ -105,7 +105,7 @@ function LoginComponent() {
           <Button
             variant="outline"
             className="w-full flex justify-center items-center py-3 rounded-md bg-black text-white hover:bg-indigo-800 transition"
-            onClick={() => signIn("google", { callbackUrl: '/dashboard' })}
+            onClick={() => signIn("google", { callbackUrl: '/' })}
           >
             Login with Google
           </Button>
@@ -118,14 +118,7 @@ function LoginComponent() {
             </button>
           </Link>
         </div>
-        <div className="mt-6">
-            <Button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full bg-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-800"
-            >
-               Logout
-            </Button>
-            </div>
+        
        
 
         {error && (

@@ -1,11 +1,9 @@
-// src/lib/authOptions.ts
 import { PrismaClient } from "@prisma/client";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
+import { DefaultSession, DefaultUser } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
@@ -14,7 +12,15 @@ declare module "next-auth" {
       role: string;
     } & DefaultSession["user"];
   }
+
   interface User extends DefaultUser {
+    id: string;
+    role: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
     id: string;
     role: string;
   }
@@ -57,15 +63,16 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id.toString(),
           email: user.email,
-          role: user.role,
+          role: user.role || "user",
         };
       },
     }),
   ],
 
   pages: {
-    signIn: "/auth/signin",
-    error: "/auth/signin",
+    signIn: "/auth/signin",  // 👈 custom sign-in page
+   
+    error: "/auth/signin",   // 👈 handle auth errors
   },
 
   session: {
@@ -81,7 +88,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
+      if (session.user && token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
