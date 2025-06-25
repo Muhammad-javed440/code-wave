@@ -12,16 +12,19 @@ const Name = () => {
     <header className="text-gray-600 bg-gray-100 shadow-sm">
       <div className="max-w-screen-lg mx-auto flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         {/* Logo + Brand */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 ">
           <Image
             src="/logo.jpg"
             alt="CodeWave AI Logo"
-            width={60}
-            height={60}
-            className="w-[60px] h-[60px] object-contain"
+            width={40}
+            height={40}
+            className="rounded-full"     
             priority
           />
-          <Link href="/" className="text-xl sm:text-2xl font-semibold text-gray-900">
+          <Link
+            href=""
+            className="text-xl sm:text-2xl font-semibold text-gray-900"
+          >
             CodeWave AI
           </Link>
         </div>

@@ -9,16 +9,16 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="text-gray-600 bg-gray-100 shadow-sm">
+    <header className="text-gray-600 bg-gray-50 shadow-sm">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo + Brand */}
         <div className="flex items-center gap-3">
           <Image
             src="/logo.jpg"
             alt="CodeWave AI Logo"
-            width={100}
-            height={100}
-            className="w-[100px] h-[100px] object-contain rounded-full"
+            width={40}
+            height={40}
+            className=" rounded-full"
             priority
           />
           <Link href="/" className="text-2xl font-semibold text-gray-900">

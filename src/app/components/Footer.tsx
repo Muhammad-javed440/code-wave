@@ -10,9 +10,9 @@ const Footer = () => {
           <Image
             src="/logo.jpg"
             alt="CodeWave AI Logo"
-            width={100}
-            height={100}
-            className="w-[100px] h-[100px] object-contain"
+            width={40}
+            height={40}
+            className="rounded-full"
             priority
           />
           <Link href="/" className="text-2xl font-semibold text-gray-900">
