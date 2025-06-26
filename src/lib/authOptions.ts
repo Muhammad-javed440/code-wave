@@ -70,8 +70,8 @@ export const authOptions: NextAuthOptions = {
   ],
 
   pages: {
-    signIn: "/auth/signin",  // 👈 custom sign-in page
-   
+    signIn: "/dashboard",  // 👈 custom sign-in page
+
     error: "/auth/signin",   // 👈 handle auth errors
   },
 
