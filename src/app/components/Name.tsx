@@ -31,12 +31,12 @@ const Name = () => {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex gap-3">
-          <Link href="/signin">
+          <Link href="/auth/signin">
             <button className="text-white bg-indigo-500 hover:bg-indigo-600 px-5 py-2 rounded-md text-sm sm:text-base">
               Login
             </button>
           </Link>
-          <Link href="/sign-up">
+          <Link href="/auth/sign-up">
             <button className="text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-5 py-2 rounded-md text-sm sm:text-base">
               Sign Up
             </button>
