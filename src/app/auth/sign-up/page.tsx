@@ -1,6 +1,7 @@
 "use client";
 
-import { SignUpForm } from "../components/SignUpForm";
+// Update the import path below if SignUpForm is located elsewhere
+import { SignUpForm } from "../../components/SignUpForm";
 import React from "react";
 
 export default function SignUpPage() {
