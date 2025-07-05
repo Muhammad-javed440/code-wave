@@ -6,7 +6,7 @@ export async function sendToAgent(message: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message }),
   });
-
+ console.log(apiBaseUrl) 
   const data = await res.json();
   return data.output;
 }
