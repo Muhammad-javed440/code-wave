@@ -1,4 +1,4 @@
-const apiBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const apiBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000/api" // Fallback to local development URL;
 
 export async function sendToAgent(message: string) {
   const res = await fetch(`${apiBaseUrl}/run-agent`, {
