@@ -41,6 +41,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+
+        console.log("credentials", credentials?.email, credentials?.password)
+
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing email or password");
         }
@@ -70,7 +73,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   pages: {
-    signIn: "/auth/signin",  // 👈 custom sign-in page
+    signIn: "/dashboard",  // 👈 custom sign-in page
    
     error: "/auth/signin",   // 👈 handle auth errors
   },
