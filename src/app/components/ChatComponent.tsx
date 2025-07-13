@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { sendToAgent } from "../api/chatAgent";
+import ChatPage from "../dashboard/components/ChatPage";
 
 export default function ChatAgent() {
   const [input, setInput] = useState("");
@@ -22,11 +23,12 @@ export default function ChatAgent() {
       />
       <button
         onClick={handleSend}
-        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
+        className="mt-2 bg-blue-600 cursor-pointer hover:bg-blue-600/60 text-white px-4 py-2 rounded"
       >
         Send
       </button>
       {response && <p className="mt-4">{response}</p>}
+
     </div>
   );
 }

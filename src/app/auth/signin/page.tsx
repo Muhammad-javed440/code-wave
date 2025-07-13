@@ -117,8 +117,8 @@ function LoginComponent() {
             </button>
           </Link>
         </div>
-        
-       
+
+
 
         {error && (
           <div className="mt-4">
