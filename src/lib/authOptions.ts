@@ -74,7 +74,7 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/dashboard",  // 👈 custom sign-in page
-   
+
     error: "/auth/signin",   // 👈 handle auth errors
   },
 
