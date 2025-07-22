@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Mic, Send, StopCircle } from "lucide-react";
+import { Mic, Send, StopCircle, Copy, Edit, Download } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -18,6 +18,8 @@ interface Message {
   timestamp: Date;
 }
 
+const LOCAL_STORAGE_KEY = "chat_session_history";
+
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,6 +30,22 @@ export default function ChatPage() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as Message[];
+        setMessages(parsed);
+      } catch {
+        console.error("Failed to parse localStorage session");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
+  }, [messages]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
@@ -35,89 +53,85 @@ export default function ChatPage() {
     if (!input.trim()) return;
 
     if (editingMessageId) {
-      // Update edited user message
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === editingMessageId ? { ...msg, content: input } : msg
-        )
-      );
+      const idx = messages.findIndex((m) => m.id === editingMessageId);
+      const updated = [...messages];
+      updated[idx] = { ...updated[idx], content: input, timestamp: new Date() };
+      if (!updated[idx + 1]?.isUser) updated.splice(idx + 1, 1);
+      setMessages(updated);
       setEditingMessageId(null);
       setInput("");
+      setIsTyping(true);
+      const res = await sendToAgent(input);
+      setMessages((prev) => [
+        ...prev,
+        { id: crypto.randomUUID(), content: res, isUser: false, timestamp: new Date() },
+      ]);
+      setIsTyping(false);
+      speak(res);
       return;
     }
 
-    const userMessage: Message = {
+    const userMsg: Message = {
       id: crypto.randomUUID(),
       content: input,
       isUser: true,
       timestamp: new Date(),
     };
-
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
-
-    const response = await sendToAgent(input);
-
-    const botMessage: Message = {
+    const res = await sendToAgent(input);
+    const botMsg: Message = {
       id: crypto.randomUUID(),
-      content: response,
+      content: res,
       isUser: false,
       timestamp: new Date(),
     };
-
-    setMessages((prev) => [...prev, botMessage]);
+    setMessages((prev) => [...prev, botMsg]);
     setIsTyping(false);
-    speak(response);
+    speak(res);
   };
 
-  const startVoiceInput = () => {
-    if (!("webkitSpeechRecognition" in window)) {
-      alert("Speech Recognition is not supported in this browser.");
-      return;
-    }
+  const speak = (text: string) => {
+    const synth = window.speechSynthesis;
+    const utter = new SpeechSynthesisUtterance(text);
+    synth.speak(utter);
+  };
 
+  const startVoice = () => {
     const recognition = new (window as any).webkitSpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.continuous = false;
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error("Speech recognition error", event.error);
-    };
-
-    recognition.onend = () => {
-      setIsRecording(false);
-    };
-
+    recognition.onresult = (e: SpeechRecognitionEvent) => setInput(e.results[0][0].transcript);
+    recognition.onerror = (e: any) => console.error("Error", e);
+    recognition.onend = () => setIsRecording(false);
     recognition.start();
     recognitionRef.current = recognition;
     setIsRecording(true);
   };
 
-  const stopVoiceInput = () => {
-    recognitionRef.current?.stop();
-    setIsRecording(false);
+  const stopVoice = () => recognitionRef.current?.stop();
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => alert("Copied!"));
   };
 
-  const speak = (text: string) => {
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
-    synth.speak(utterance);
+  const handleDownload = (text: string) => {
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "chat-output.txt";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-900 dark:to-gray-800">
-      <header className="p-4 text-center border-b border-gray-300 dark:border-gray-700 shadow-sm bg-white/80 dark:bg-gray-900/60 backdrop-blur-md">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-          💬 AI Chat Assistant
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">powered by GPT</p>
+      <header className="p-4 text-center border-b bg-white dark:bg-gray-900 shadow">
+        <h1 className="text-2xl font-bold">💬 AI Chat Assistant</h1>
+        <p className="text-sm text-gray-500">Powered by GPT</p>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-4 max-w-3xl w-full mx-auto">
@@ -129,50 +143,47 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`flex gap-3 items-start ${
-                msg.isUser ? "justify-end" : "justify-start"
-              }`}
+              className={`flex gap-3 items-start ${msg.isUser ? "justify-end" : "justify-start"}`}
             >
-              {!msg.isUser && (
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-lg">
-                  🤖
-                </div>
-              )}
-              {msg.isUser && (
-                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-bold text-gray-800">
-                  👤
-                </div>
-              )}
+              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                {msg.isUser ? "👤" : "🤖"}
+              </div>
 
               <div
-                className={`max-w-[75%] px-4 py-2 rounded-xl text-sm md:text-base whitespace-pre-wrap shadow-sm relative ${
-                  msg.isUser
-                    ? "bg-blue-500 text-white ml-auto"
-                    : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className={`relative max-w-[80%] md:max-w-[70%] p-3 rounded-xl shadow text-sm whitespace-pre-wrap ${
+                  msg.isUser ? "bg-blue-500 text-white" : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                 }`}
               >
                 <ReactMarkdown
+                  className="prose dark:prose-invert prose-sm max-w-none"
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeHighlight]}
                 >
                   {msg.content}
                 </ReactMarkdown>
-                <div className="text-xs mt-1 text-right text-gray-200 dark:text-gray-400">
-                  {msg.timestamp.toLocaleTimeString()}
-                </div>
 
-                {msg.isUser && (
-                  <button
-                    onClick={() => {
+                <div className="flex justify-end gap-2 mt-2 text-xs">
+                  <button onClick={() => handleCopy(msg.content)} title="Copy">
+                    <Copy className="w-4 h-4" />
+                  </button>
+                  {!msg.isUser && (
+                    <button onClick={() => handleDownload(msg.content)} title="Download">
+                      <Download className="w-4 h-4" />
+                    </button>
+                  )}
+                  {msg.isUser && (
+                    <button onClick={() => {
                       setInput(msg.content);
                       setEditingMessageId(msg.id);
-                    }}
-                    className="absolute top-1 right-2 text-xs text-white/80 hover:text-white underline"
-                    title="Edit"
-                  >
-                    Edit
-                  </button>
-                )}
+                    }} title="Edit">
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="text-right text-gray-400 text-[10px] mt-1">
+                  {new Date(msg.timestamp).toLocaleTimeString()}
+                </div>
               </div>
             </motion.div>
           ))}
@@ -183,11 +194,10 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex items-center gap-2 text-gray-500 dark:text-gray-400"
+              className="text-gray-400 italic flex items-center gap-2"
             >
-              <span className="text-lg">🤖</span>
-              <span className="italic">Typing...</span>
+              <span>🤖</span>
+              <span>Typing...</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -215,10 +225,8 @@ export default function ChatPage() {
             <Send className="h-5 w-5" />
           </button>
           <button
-            onClick={isRecording ? stopVoiceInput : startVoiceInput}
-            className={`p-2 rounded-full ${
-              isRecording ? "bg-red-500" : "bg-green-500"
-            } hover:opacity-80 text-white shadow-md`}
+            onClick={isRecording ? stopVoice : startVoice}
+            className={`p-2 rounded-full ${isRecording ? "bg-red-500" : "bg-green-500"} text-white shadow-md`}
           >
             {isRecording ? <StopCircle className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
           </button>
