@@ -26,7 +26,7 @@ export default async function DashboardPage() {
 
       <Link href="/chat" className="fixed cursor-pointer hover:bg-gray-200 p-2 rounded-full bottom-10 right-10 flex items-center justify-centers">
         <Image
-    src="/icons/chatbot.png"
+    src="/gemini.webp"
     alt="Chat Bot"
     width={40}
     height={40}
