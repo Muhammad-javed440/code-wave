@@ -6,6 +6,7 @@ import HeroDashboard from "../components/HeroDashboard";
 import ChatComponent from "../components/ChatComponent";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 // Or, if the file is named 'HeroDashboard/index.tsx':
 // import HeroDashboard from "@/components/HeroDashboard";
 
@@ -24,7 +25,13 @@ export default async function DashboardPage() {
       {/* Add any other components or content you want to display on the dashboard */}
 
       <Link href="/chat" className="fixed cursor-pointer hover:bg-gray-200 p-2 rounded-full bottom-10 right-10 flex items-center justify-centers">
-        <Plus size={24} />
+        <Image
+    src="/icons/chatbot.png"
+    alt="Chat Bot"
+    width={40}
+    height={40}
+    className="rounded-full"
+  />
       </Link>
     </div>
   );
