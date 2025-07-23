@@ -189,18 +189,18 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-900 dark:to-gray-800">
-      <header className="relative p-4 text-center border-b bg-white dark:bg-gray-900 shadow">
-        <h1 className="text-2xl font-bold">💬 AI Chat Assistant</h1>
-        <p className="text-sm text-gray-500">Powered by GPT</p>
+      <header className="relative p-4 text-center border-b bg-white dark:bg-gray-900 shadow flex-shrink-0">
+        <h1 className="text-xl sm:text-2xl font-bold">💬 AI Chat Assistant</h1>
+        <p className="text-xs sm:text-sm text-gray-500">Powered by GPT</p>
         <button
           onClick={() => setIsDark(!isDark)}
-          className="absolute top-4 right-4 text-gray-500 dark:text-gray-300 text-sm"
+          className="absolute top-4 right-4 text-gray-500 dark:text-gray-300 text-xs sm:text-sm"
         >
           {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-4 space-y-4 max-w-3xl w-full mx-auto">
+      <main className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-4 max-w-3xl w-full mx-auto">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div
@@ -209,16 +209,16 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`flex gap-3 items-start ${
+              className={`flex gap-2 items-start ${
                 msg.isUser ? "justify-end" : "justify-start"
               }`}
             >
-              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs sm:text-base">
                 {msg.isUser ? "👤" : "🤖"}
               </div>
 
               <div
-                className={`relative max-w-[80%] md:max-w-[70%] p-3 rounded-xl shadow text-sm whitespace-pre-wrap ${
+                className={`relative max-w-[85%] sm:max-w-[80%] md:max-w-[70%] p-2 sm:p-3 rounded-xl shadow text-sm whitespace-pre-wrap break-words ${
                   msg.isUser
                     ? "bg-blue-500 text-white"
                     : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
@@ -239,16 +239,10 @@ export default function ChatPage() {
                   </button>
                   {!msg.isUser && (
                     <>
-                      <button
-                        onClick={() => handleDownload(msg.content)}
-                        title="Download"
-                      >
+                      <button onClick={() => handleDownload(msg.content)} title="Download">
                         <Download className="w-4 h-4" />
                       </button>
-                      <button
-                        onClick={() => handleDeleteMessage(msg.id)}
-                        title="Delete"
-                      >
+                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
                         <Trash className="w-4 h-4 text-red-500" />
                       </button>
                     </>
@@ -264,10 +258,7 @@ export default function ChatPage() {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button
-                        onClick={() => handleDeleteMessage(msg.id)}
-                        title="Delete"
-                      >
+                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
                         <Trash className="w-4 h-4 text-red-500" />
                       </button>
                     </>
@@ -280,7 +271,6 @@ export default function ChatPage() {
               </div>
             </motion.div>
           ))}
-
           {isTyping && (
             <motion.div
               key="typing"
@@ -297,12 +287,11 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </main>
 
-      <footer className="w-full max-w-3xl mx-auto px-4 py-3 flex flex-col gap-2 border-t border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <footer className="w-full max-w-3xl mx-auto px-2 sm:px-4 py-3 flex flex-col gap-2 border-t border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 flex-shrink-0">
         {editingMessageId && (
           <p className="text-sm text-blue-600">Editing your message...</p>
         )}
-
-        <div className="flex gap-4 justify-end text-sm text-blue-600">
+        <div className="flex flex-wrap gap-2 justify-end text-sm text-blue-600">
           <button onClick={exportAsMarkdown} className="hover:underline">
             ⬇️ Export Markdown
           </button>
@@ -313,7 +302,6 @@ export default function ChatPage() {
             🗑️ Clear Chat
           </button>
         </div>
-
         <div className="flex gap-2 items-center">
           <input
             type="text"
@@ -321,7 +309,7 @@ export default function ChatPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-white"
+            className="flex-1 px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-white text-sm"
           />
           <button
             onClick={handleSend}
