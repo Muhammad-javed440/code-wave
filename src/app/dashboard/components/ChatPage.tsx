@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Mic, Send, StopCircle, Copy, Edit, Download } from "lucide-react";
+import {
+  Mic,
+  Send,
+  StopCircle,
+  Copy,
+  Edit,
+  Download,
+  Trash,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -26,6 +34,13 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") === "dark";
+    }
+    return false;
+  });
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -49,6 +64,16 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -56,21 +81,26 @@ export default function ChatPage() {
       const idx = messages.findIndex((m) => m.id === editingMessageId);
       const updated = [...messages];
       updated[idx] = { ...updated[idx], content: input, timestamp: new Date() };
-      if (!updated[idx + 1]?.isUser) updated.splice(idx + 1, 1);
+
+      // Remove old bot reply
+      if (updated[idx + 1] && !updated[idx + 1].isUser) {
+        updated.splice(idx + 1, 1);
+      }
+
       setMessages(updated);
       setEditingMessageId(null);
       setInput("");
       setIsTyping(true);
+
       const res = await sendToAgent(input);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: res,
-          isUser: false,
-          timestamp: new Date(),
-        },
-      ]);
+      const newBotMsg: Message = {
+        id: crypto.randomUUID(),
+        content: res,
+        isUser: false,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, newBotMsg]);
       setIsTyping(false);
       speak(res);
       return;
@@ -85,6 +115,7 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
+
     const res = await sendToAgent(input);
     const botMsg: Message = {
       id: crypto.randomUUID(),
@@ -108,8 +139,7 @@ export default function ChatPage() {
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.continuous = false;
-    recognition.onresult = (e: SpeechRecognitionEvent) =>
-      setInput(e.results[0][0].transcript);
+    recognition.onresult = (e: SpeechRecognitionEvent) => setInput(e.results[0][0].transcript);
     recognition.onerror = (e: any) => console.error("Error", e);
     recognition.onend = () => setIsRecording(false);
     recognition.start();
@@ -133,11 +163,50 @@ export default function ChatPage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleDeleteMessage = (id: string) => {
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
+  };
+
+  const handleClearChat = () => {
+    if (confirm("Are you sure you want to clear the chat?")) {
+      setMessages([]);
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  };
+
+  const exportAsMarkdown = () => {
+    const md = messages.map((msg) => `${msg.isUser ? "**User:**" : "**AI:**"}\n${msg.content}\n`).join("\n\n---\n\n");
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "chat-history.md";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportAsPDF = () => {
+    const text = messages.map((msg) => `${msg.isUser ? "User" : "AI"}:\n${msg.content}`).join("\n\n---\n\n");
+    const blob = new Blob([text], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "chat-history.pdf";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-900 dark:to-gray-800">
-      <header className="p-4 text-center border-b bg-white dark:bg-gray-900 shadow">
+      <header className="relative p-4 text-center border-b bg-white dark:bg-gray-900 shadow">
         <h1 className="text-2xl font-bold">💬 AI Chat Assistant</h1>
         <p className="text-sm text-gray-500">Powered by GPT</p>
+        <button
+          onClick={() => setIsDark(!isDark)}
+          className="absolute top-4 right-4 text-gray-500 dark:text-gray-300 text-sm"
+        >
+          {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        </button>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-4 max-w-3xl w-full mx-auto">
@@ -149,9 +218,7 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`flex gap-3 items-start ${
-                msg.isUser ? "justify-end" : "justify-start"
-              }`}
+              className={`flex gap-3 items-start ${msg.isUser ? "justify-end" : "justify-start"}`}
             >
               <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                 {msg.isUser ? "👤" : "🤖"}
@@ -159,9 +226,7 @@ export default function ChatPage() {
 
               <div
                 className={`relative max-w-[80%] md:max-w-[70%] p-3 rounded-xl shadow text-sm whitespace-pre-wrap ${
-                  msg.isUser
-                    ? "bg-blue-500 text-white"
-                    : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  msg.isUser ? "bg-blue-500 text-white" : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                 }`}
               >
                 <div className="prose dark:prose-invert prose-sm max-w-none">
@@ -178,23 +243,30 @@ export default function ChatPage() {
                     <Copy className="w-4 h-4" />
                   </button>
                   {!msg.isUser && (
-                    <button
-                      onClick={() => handleDownload(msg.content)}
-                      title="Download"
-                    >
-                      <Download className="w-4 h-4" />
-                    </button>
+                    <>
+                      <button onClick={() => handleDownload(msg.content)} title="Download">
+                        <Download className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
+                        <Trash className="w-4 h-4 text-red-500" />
+                      </button>
+                    </>
                   )}
                   {msg.isUser && (
-                    <button
-                      onClick={() => {
-                        setInput(msg.content);
-                        setEditingMessageId(msg.id);
-                      }}
-                      title="Edit"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => {
+                          setInput(msg.content);
+                          setEditingMessageId(msg.id);
+                        }}
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
+                        <Trash className="w-4 h-4 text-red-500" />
+                      </button>
+                    </>
                   )}
                 </div>
 
@@ -226,6 +298,12 @@ export default function ChatPage() {
           <p className="text-sm text-blue-600">Editing your message...</p>
         )}
 
+        <div className="flex gap-4 justify-end text-sm text-blue-600">
+          <button onClick={exportAsMarkdown} className="hover:underline">⬇️ Export Markdown</button>
+          <button onClick={exportAsPDF} className="hover:underline">📄 Export PDF</button>
+          <button onClick={handleClearChat} className="text-red-500 hover:underline">🗑️ Clear Chat</button>
+        </div>
+
         <div className="flex gap-2 items-center">
           <input
             type="text"
@@ -243,15 +321,9 @@ export default function ChatPage() {
           </button>
           <button
             onClick={isRecording ? stopVoice : startVoice}
-            className={`p-2 rounded-full ${
-              isRecording ? "bg-red-500" : "bg-green-500"
-            } text-white shadow-md`}
+            className={`p-2 rounded-full ${isRecording ? "bg-red-500" : "bg-green-500"} text-white shadow-md`}
           >
-            {isRecording ? (
-              <StopCircle className="h-5 w-5" />
-            ) : (
-              <Mic className="h-5 w-5" />
-            )}
+            {isRecording ? <StopCircle className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
           </button>
         </div>
       </footer>
