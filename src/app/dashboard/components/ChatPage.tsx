@@ -60,7 +60,8 @@ export default function ChatPage() {
           : msg
       );
 
-      const nextBotIndex = messages.findIndex((m) => m.id === editingMessageId) + 1;
+      const nextBotIndex =
+        messages.findIndex((m) => m.id === editingMessageId) + 1;
       const updated =
         nextBotIndex < messages.length && !messages[nextBotIndex].isUser
           ? updatedMessages.filter((_, i) => i !== nextBotIndex)
@@ -189,12 +190,18 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-900 dark:to-gray-800">
-      <header className="relative p-4 text-center border-b bg-white dark:bg-gray-900 shadow flex-shrink-0">
-        <h1 className="text-xl sm:text-2xl font-bold">💬 AI Chat Assistant</h1>
-        <p className="text-xs sm:text-sm text-gray-500">Powered by GPT</p>
+      <header className="flex flex-wrap items-center justify-between gap-2 p-4 border-b bg-white dark:bg-gray-900 shadow flex-shrink-0 w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center">
+          <h1 className="text-lg sm:text-2xl font-bold">
+            💬 AI Chat Assistant
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 sm:ml-2">
+            Powered by GPT
+          </p>
+        </div>
         <button
           onClick={() => setIsDark(!isDark)}
-          className="absolute top-4 right-4 text-gray-500 dark:text-gray-300 text-xs sm:text-sm"
+          className="text-gray-500 dark:text-gray-300 text-sm whitespace-nowrap"
         >
           {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
@@ -239,10 +246,16 @@ export default function ChatPage() {
                   </button>
                   {!msg.isUser && (
                     <>
-                      <button onClick={() => handleDownload(msg.content)} title="Download">
+                      <button
+                        onClick={() => handleDownload(msg.content)}
+                        title="Download"
+                      >
                         <Download className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
+                      <button
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        title="Delete"
+                      >
                         <Trash className="w-4 h-4 text-red-500" />
                       </button>
                     </>
@@ -258,7 +271,10 @@ export default function ChatPage() {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
+                      <button
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        title="Delete"
+                      >
                         <Trash className="w-4 h-4 text-red-500" />
                       </button>
                     </>
@@ -298,7 +314,10 @@ export default function ChatPage() {
           <button onClick={exportAsPDF} className="hover:underline">
             📄 Export PDF
           </button>
-          <button onClick={handleClearChat} className="text-red-500 hover:underline">
+          <button
+            onClick={handleClearChat}
+            className="text-red-500 hover:underline"
+          >
             🗑️ Clear Chat
           </button>
         </div>
@@ -323,7 +342,11 @@ export default function ChatPage() {
               isRecording ? "bg-red-500" : "bg-green-500"
             } text-white shadow-md`}
           >
-            {isRecording ? <StopCircle className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+            {isRecording ? (
+              <StopCircle className="h-5 w-5" />
+            ) : (
+              <Mic className="h-5 w-5" />
+            )}
           </button>
         </div>
       </footer>
