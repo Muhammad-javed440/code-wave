@@ -15,6 +15,7 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { motion, AnimatePresence } from "framer-motion";
 import { sendToAgent } from "@/app/api/chatAgent";
+import jsPDF from "jspdf";
 
 type SpeechRecognition = any;
 type SpeechRecognitionEvent = any;
@@ -44,26 +45,34 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
+  // Load message history from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as Message[];
-        setMessages(parsed);
+        const restored = parsed.map((msg) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+        }));
+        setMessages(restored);
       } catch {
         console.error("Failed to parse localStorage session");
       }
     }
   }, []);
 
+  // Save message history to localStorage
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
   }, [messages]);
 
+  // Scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // Handle theme
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -82,7 +91,6 @@ export default function ChatPage() {
       const updated = [...messages];
       updated[idx] = { ...updated[idx], content: input, timestamp: new Date() };
 
-      // Remove old bot reply
       if (updated[idx + 1] && !updated[idx + 1].isUser) {
         updated.splice(idx + 1, 1);
       }
@@ -139,7 +147,8 @@ export default function ChatPage() {
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.continuous = false;
-    recognition.onresult = (e: SpeechRecognitionEvent) => setInput(e.results[0][0].transcript);
+    recognition.onresult = (e: SpeechRecognitionEvent) =>
+      setInput(e.results[0][0].transcript);
     recognition.onerror = (e: any) => console.error("Error", e);
     recognition.onend = () => setIsRecording(false);
     recognition.start();
@@ -175,7 +184,9 @@ export default function ChatPage() {
   };
 
   const exportAsMarkdown = () => {
-    const md = messages.map((msg) => `${msg.isUser ? "**User:**" : "**AI:**"}\n${msg.content}\n`).join("\n\n---\n\n");
+    const md = messages
+      .map((msg) => `${msg.isUser ? "**User:**" : "**AI:**"}\n${msg.content}`)
+      .join("\n\n---\n\n");
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -186,14 +197,22 @@ export default function ChatPage() {
   };
 
   const exportAsPDF = () => {
-    const text = messages.map((msg) => `${msg.isUser ? "User" : "AI"}:\n${msg.content}`).join("\n\n---\n\n");
-    const blob = new Blob([text], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "chat-history.pdf";
-    a.click();
-    URL.revokeObjectURL(url);
+    const doc = new jsPDF();
+    let y = 10;
+
+    messages.forEach((msg, index) => {
+      const role = msg.isUser ? "User" : "AI";
+      const lines = doc.splitTextToSize(`${role}: ${msg.content}`, 180);
+      doc.text(lines, 10, y);
+      y += lines.length * 10 + 10;
+
+      if (y > 280 && index !== messages.length - 1) {
+        doc.addPage();
+        y = 10;
+      }
+    });
+
+    doc.save("chat-history.pdf");
   };
 
   return (
@@ -218,7 +237,9 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`flex gap-3 items-start ${msg.isUser ? "justify-end" : "justify-start"}`}
+              className={`flex gap-3 items-start ${
+                msg.isUser ? "justify-end" : "justify-start"
+              }`}
             >
               <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                 {msg.isUser ? "👤" : "🤖"}
@@ -226,7 +247,9 @@ export default function ChatPage() {
 
               <div
                 className={`relative max-w-[80%] md:max-w-[70%] p-3 rounded-xl shadow text-sm whitespace-pre-wrap ${
-                  msg.isUser ? "bg-blue-500 text-white" : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  msg.isUser
+                    ? "bg-blue-500 text-white"
+                    : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                 }`}
               >
                 <div className="prose dark:prose-invert prose-sm max-w-none">
@@ -244,10 +267,16 @@ export default function ChatPage() {
                   </button>
                   {!msg.isUser && (
                     <>
-                      <button onClick={() => handleDownload(msg.content)} title="Download">
+                      <button
+                        onClick={() => handleDownload(msg.content)}
+                        title="Download"
+                      >
                         <Download className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
+                      <button
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        title="Delete"
+                      >
                         <Trash className="w-4 h-4 text-red-500" />
                       </button>
                     </>
@@ -263,7 +292,10 @@ export default function ChatPage() {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">
+                      <button
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        title="Delete"
+                      >
                         <Trash className="w-4 h-4 text-red-500" />
                       </button>
                     </>
@@ -299,9 +331,15 @@ export default function ChatPage() {
         )}
 
         <div className="flex gap-4 justify-end text-sm text-blue-600">
-          <button onClick={exportAsMarkdown} className="hover:underline">⬇️ Export Markdown</button>
-          <button onClick={exportAsPDF} className="hover:underline">📄 Export PDF</button>
-          <button onClick={handleClearChat} className="text-red-500 hover:underline">🗑️ Clear Chat</button>
+          <button onClick={exportAsMarkdown} className="hover:underline">
+            ⬇️ Export Markdown
+          </button>
+          <button onClick={exportAsPDF} className="hover:underline">
+            📄 Export PDF
+          </button>
+          <button onClick={handleClearChat} className="text-red-500 hover:underline">
+            🗑️ Clear Chat
+          </button>
         </div>
 
         <div className="flex gap-2 items-center">
@@ -321,7 +359,9 @@ export default function ChatPage() {
           </button>
           <button
             onClick={isRecording ? stopVoice : startVoice}
-            className={`p-2 rounded-full ${isRecording ? "bg-red-500" : "bg-green-500"} text-white shadow-md`}
+            className={`p-2 rounded-full ${
+              isRecording ? "bg-red-500" : "bg-green-500"
+            } text-white shadow-md`}
           >
             {isRecording ? <StopCircle className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
           </button>
