@@ -3,15 +3,13 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import Image from "next/image";
-import { Menu, X, Sun, Moon } from "lucide-react";
-import { useDarkMode } from "@/hooks/useDarkMode"; // adjust the import path
+import { Menu, X } from "lucide-react";
 
 const Name = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, toggleTheme] = useDarkMode();
 
   return (
-    <header className="text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-900 shadow-sm">
+    <header className="text-gray-600 bg-gray-100 shadow-sm">
       <div className="max-w-screen-lg mx-auto px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between">
         {/* Left: Logo + Brand */}
         <div className="flex items-center gap-2 min-w-0">
@@ -25,7 +23,7 @@ const Name = () => {
           />
           <Link
             href="/"
-            className="truncate text-base sm:text-xl font-semibold text-gray-900 dark:text-white"
+            className="truncate text-base sm:text-xl font-semibold text-gray-900"
           >
             CodeWave AI
           </Link>
@@ -33,21 +31,13 @@ const Name = () => {
 
         {/* Right: Desktop View */}
         <div className="hidden md:flex items-center gap-2 sm:gap-3">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
           <Link href="/auth/signin">
             <button className="text-white bg-indigo-500 hover:bg-indigo-600 px-4 sm:px-5 py-1.5 sm:py-2 rounded-md text-sm sm:text-base">
               Login
             </button>
           </Link>
           <Link href="/auth/sign-up">
-            <button className="text-indigo-500 border border-indigo-500 hover:bg-indigo-100 dark:hover:bg-gray-800 px-4 sm:px-5 py-1.5 sm:py-2 rounded-md text-sm sm:text-base">
+            <button className="text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-4 sm:px-5 py-1.5 sm:py-2 rounded-md text-sm sm:text-base">
               Sign Up
             </button>
           </Link>
@@ -55,13 +45,6 @@ const Name = () => {
 
         {/* Right: Mobile Menu Toggle */}
         <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-1.5"
@@ -81,7 +64,7 @@ const Name = () => {
             </button>
           </Link>
           <Link href="/auth/sign-up">
-            <button className="w-full text-indigo-500 border border-indigo-500 hover:bg-indigo-100 dark:hover:bg-gray-800 px-4 py-2 rounded-md text-sm">
+            <button className="w-full text-indigo-500 border border-indigo-500 hover:bg-indigo-100 px-4 py-2 rounded-md text-sm">
               Sign Up
             </button>
           </Link>
