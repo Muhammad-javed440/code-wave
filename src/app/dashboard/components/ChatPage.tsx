@@ -64,7 +64,12 @@ export default function ChatPage() {
       const res = await sendToAgent(input);
       setMessages((prev) => [
         ...prev,
-        { id: crypto.randomUUID(), content: res, isUser: false, timestamp: new Date() },
+        {
+          id: crypto.randomUUID(),
+          content: res,
+          isUser: false,
+          timestamp: new Date(),
+        },
       ]);
       setIsTyping(false);
       speak(res);
@@ -103,7 +108,8 @@ export default function ChatPage() {
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.continuous = false;
-    recognition.onresult = (e: SpeechRecognitionEvent) => setInput(e.results[0][0].transcript);
+    recognition.onresult = (e: SpeechRecognitionEvent) =>
+      setInput(e.results[0][0].transcript);
     recognition.onerror = (e: any) => console.error("Error", e);
     recognition.onend = () => setIsRecording(false);
     recognition.start();
@@ -143,7 +149,9 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`flex gap-3 items-start ${msg.isUser ? "justify-end" : "justify-start"}`}
+              className={`flex gap-3 items-start ${
+                msg.isUser ? "justify-end" : "justify-start"
+              }`}
             >
               <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                 {msg.isUser ? "👤" : "🤖"}
@@ -151,31 +159,40 @@ export default function ChatPage() {
 
               <div
                 className={`relative max-w-[80%] md:max-w-[70%] p-3 rounded-xl shadow text-sm whitespace-pre-wrap ${
-                  msg.isUser ? "bg-blue-500 text-white" : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  msg.isUser
+                    ? "bg-blue-500 text-white"
+                    : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                 }`}
               >
-                <ReactMarkdown
-                  className="prose dark:prose-invert prose-sm max-w-none"
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeHighlight]}
-                >
-                  {msg.content}
-                </ReactMarkdown>
+                <div className="prose dark:prose-invert prose-sm max-w-none">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
 
                 <div className="flex justify-end gap-2 mt-2 text-xs">
                   <button onClick={() => handleCopy(msg.content)} title="Copy">
                     <Copy className="w-4 h-4" />
                   </button>
                   {!msg.isUser && (
-                    <button onClick={() => handleDownload(msg.content)} title="Download">
+                    <button
+                      onClick={() => handleDownload(msg.content)}
+                      title="Download"
+                    >
                       <Download className="w-4 h-4" />
                     </button>
                   )}
                   {msg.isUser && (
-                    <button onClick={() => {
-                      setInput(msg.content);
-                      setEditingMessageId(msg.id);
-                    }} title="Edit">
+                    <button
+                      onClick={() => {
+                        setInput(msg.content);
+                        setEditingMessageId(msg.id);
+                      }}
+                      title="Edit"
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
                   )}
@@ -226,9 +243,15 @@ export default function ChatPage() {
           </button>
           <button
             onClick={isRecording ? stopVoice : startVoice}
-            className={`p-2 rounded-full ${isRecording ? "bg-red-500" : "bg-green-500"} text-white shadow-md`}
+            className={`p-2 rounded-full ${
+              isRecording ? "bg-red-500" : "bg-green-500"
+            } text-white shadow-md`}
           >
-            {isRecording ? <StopCircle className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+            {isRecording ? (
+              <StopCircle className="h-5 w-5" />
+            ) : (
+              <Mic className="h-5 w-5" />
+            )}
           </button>
         </div>
       </footer>
