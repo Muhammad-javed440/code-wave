@@ -27,59 +27,26 @@ interface Message {
   timestamp: Date;
 }
 
-const LOCAL_STORAGE_KEY = "chat_session_history";
-
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") === "dark";
-    }
-    return false;
-  });
+  const [isDark, setIsDark] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  // Load message history from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved) as Message[];
-        const restored = parsed.map((msg) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp),
-        }));
-        setMessages(restored);
-      } catch {
-        console.error("Failed to parse localStorage session");
-      }
-    }
-  }, []);
-
-  // Save message history to localStorage
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
-  }, [messages]);
-
-  // Scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Handle theme
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
     }
   }, [isDark]);
 
@@ -87,13 +54,17 @@ export default function ChatPage() {
     if (!input.trim()) return;
 
     if (editingMessageId) {
-      const idx = messages.findIndex((m) => m.id === editingMessageId);
-      const updated = [...messages];
-      updated[idx] = { ...updated[idx], content: input, timestamp: new Date() };
+      const updatedMessages = messages.map((msg) =>
+        msg.id === editingMessageId
+          ? { ...msg, content: input, timestamp: new Date() }
+          : msg
+      );
 
-      if (updated[idx + 1] && !updated[idx + 1].isUser) {
-        updated.splice(idx + 1, 1);
-      }
+      const nextBotIndex = messages.findIndex((m) => m.id === editingMessageId) + 1;
+      const updated =
+        nextBotIndex < messages.length && !messages[nextBotIndex].isUser
+          ? updatedMessages.filter((_, i) => i !== nextBotIndex)
+          : updatedMessages;
 
       setMessages(updated);
       setEditingMessageId(null);
@@ -120,6 +91,7 @@ export default function ChatPage() {
       isUser: true,
       timestamp: new Date(),
     };
+
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
@@ -131,6 +103,7 @@ export default function ChatPage() {
       isUser: false,
       timestamp: new Date(),
     };
+
     setMessages((prev) => [...prev, botMsg]);
     setIsTyping(false);
     speak(res);
@@ -179,7 +152,6 @@ export default function ChatPage() {
   const handleClearChat = () => {
     if (confirm("Are you sure you want to clear the chat?")) {
       setMessages([]);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
   };
 
