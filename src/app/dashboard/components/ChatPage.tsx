@@ -196,7 +196,7 @@ export default function ChatPage() {
             💬 AI Chat Assistant
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 sm:ml-2">
-            Powered by GPT
+            Powered by Google Gemini
           </p>
         </div>
         <button
