@@ -32,11 +32,13 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [isDark, setIsDark] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -113,7 +115,20 @@ export default function ChatPage() {
   const speak = (text: string) => {
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(text);
+
+    utter.onstart = () => setIsSpeaking(true);
+    utter.onend = () => setIsSpeaking(false);
+    utter.onerror = () => setIsSpeaking(false);
+
+    synth.cancel(); // Stop previous speech
     synth.speak(utter);
+    speechUtteranceRef.current = utter;
+  };
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    speechUtteranceRef.current = null;
+    setIsSpeaking(false);
   };
 
   const startVoice = () => {
@@ -333,6 +348,7 @@ export default function ChatPage() {
           <button
             onClick={handleSend}
             className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md"
+            title="Send"
           >
             <Send className="h-5 w-5" />
           </button>
@@ -341,6 +357,7 @@ export default function ChatPage() {
             className={`p-2 rounded-full ${
               isRecording ? "bg-red-500" : "bg-green-500"
             } text-white shadow-md`}
+            title={isRecording ? "Stop Recording" : "Start Recording"}
           >
             {isRecording ? (
               <StopCircle className="h-5 w-5" />
@@ -348,6 +365,15 @@ export default function ChatPage() {
               <Mic className="h-5 w-5" />
             )}
           </button>
+          {isSpeaking && (
+            <button
+              onClick={stopSpeaking}
+              className="p-2 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white shadow-md"
+              title="Stop Voice Output"
+            >
+              <StopCircle className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </footer>
     </div>
