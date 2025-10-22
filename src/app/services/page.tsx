@@ -16,16 +16,7 @@ const services = [
     description: "Grow your audience with content strategies, post scheduling, and analytics.",
     icon: "📱",
   },
-  {
-    title: "Video Editing",
-    description: "High-quality video editing for YouTube, Instagram, and professional use.",
-    icon: "🎬",
-  },
-  {
-    title: "Photo Editing",
-    description: "Creative and professional photo retouching and graphic design.",
-    icon: "🖼️",
-  },
+  
 ];
 
 
