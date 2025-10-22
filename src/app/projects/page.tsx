@@ -55,17 +55,17 @@ const summaries = [
     heading: "Crawling & Data Storage to Google Sheet",
     content: ` The app crawls the requested website, processes the content into cleaned markdown, and then
  saves it to the Google Spreadsheet under two columns URL and Content`,
-    imageUrl: "/blockchain.jpeg",
+    imageUrl: "/crawling1.png",
   },
   {
     title: "Multi AI Agent Workflow",
     heading: "Multi AI Agent Translation Workflow",
-    content: `In this workflow first agent translate text and second agent Edit the translation text if grammer mistake and third agent proofreading.`,
-    imageUrl: "/translation.jpg",
+    content: `In this workflow, the first agent translates the input text into the target language. The second agent then reviews the translated text to correct any grammatical or structural mistakes. Finally, the third agent performs proofreading to ensure the translation is polished, natural, and ready for final use.`,
+    imageUrl: "/translation1.png",
   },
   {
     title: "IDM",
-    heading: "Internet Download Manegar",
+    heading: "Internet Download Manager in Python",
     content: `I built an IDM in python which which download video from Tiktok, YouTube and other chinese channel. `,
     imageUrl: "/5GTechnology.jpg",
   },
@@ -88,46 +88,47 @@ const Page = () => {
   };
 
   return (
-    <section className="text-gray-600 body-font">
-      <div className="container px-5 py-24 mx-auto">
-        <div className="flex flex-wrap -m-4">
-          {summaries.map((item, index) => (
-            <div key={index} className="p-4 md:w-1/3">
-              <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-                <Image
-                  className="lg:h-48 md:h-36 w-full object-cover object-center"
-                  src={item.imageUrl}
-                  alt={item.title}
-                  width={740}
-                  height={480}
-                />
-                <div className="p-6">
-                  <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
-                    {item.title}
-                  </h2>
-                  <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                    {item.heading}
-                  </h1>
-                  <p
-                    className={`leading-relaxed mb-3 transition-all duration-300 ${
-                      expandedIndex === index ? "" : "line-clamp-2"
-                    }`}
-                  >
-                    {item.content}
-                  </p>
-                  <button
-                    onClick={() => toggleExpand(index)}
-                    className="text-indigo-500 hover:underline text-sm mb-4"
-                  >
-                    {expandedIndex === index ? "Read Less" : "Read More"}
-                  </button>
-                </div>
-              </div>
+   <section className="text-gray-600 body-font">
+  <div className="container px-5 py-24 mx-auto">
+    <div className="flex flex-wrap -m-4">
+      {summaries.map((item, index) => (
+        <div key={index} className="p-4 md:w-1/3">
+          <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+            <Image
+              className="sm:h-56 md:h-72 lg:h-96 w-full object-cover object-center"
+              src={item.imageUrl}
+              alt={item.title}
+              width={740}
+              height={480}
+            />
+            <div className="p-6">
+              <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
+                {item.title}
+              </h2>
+              <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
+                {item.heading}
+              </h1>
+              <p
+                className={`leading-relaxed mb-3 transition-all duration-300 ${
+                  expandedIndex === index ? "" : "line-clamp-2"
+                }`}
+              >
+                {item.content}
+              </p>
+              <button
+                onClick={() => toggleExpand(index)}
+                className="text-indigo-500 hover:underline text-sm mb-4"
+              >
+                {expandedIndex === index ? "Read Less" : "Read More"}
+              </button>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
+  </div>
+</section>
+
   );
 };
 
