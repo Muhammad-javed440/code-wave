@@ -44,8 +44,8 @@ const Contact = () => {
       <button className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
         Button
       </button>
-      <p className="mt-3">Mobile: +92-302-400-8502</p>
-      <p>Email: meherjaved440@gmail.com</p>
+      <p className="mt-3">Whatsapp: +92-302-400-8502</p>
+      <p>Email: codewaveai44@gmail.com</p>
     </div>
   </div>
 </section>
