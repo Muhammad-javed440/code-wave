@@ -18,21 +18,10 @@ const page = () => {
           {
             name: "Muhammad Javed",
             role: "Agentic AI Engineer & UI Developer",
-            imgSrc: "/javed.jpeg",
+            imgSrc: "/javed.png",
             description: `An Agentic AI Engineer & Full Stack Web Developer designs intelligent, autonomous AI agents and builds complete web solutions. They integrate AI into frontend and backend systems to automate tasks, enhance user experience, and deliver scalable, smart web applications.`,
           },
-          {
-            name: "Muhammad Sohail",
-            role: "Agentic AI Engineer & Full stack Web Developer",
-            imgSrc: "/boy.jpg",
-            description: `An Agentic AI Engineer & Full Stack Web Developer designs intelligent, autonomous AI agents and builds complete web solutions. They integrate AI into frontend and backend systems to automate tasks, enhance user experience, and deliver scalable, smart web applications.`,
-          },
-          {
-            name: "Amna Javed",
-            role: "Agentic AI Engineer & UI Developer",
-            imgSrc: "/girl1.jpg",
-            description: `An Agentic AI Engineer & Full Stack Web Developer designs intelligent, autonomous AI agents and builds complete web solutions. They integrate AI into frontend and backend systems to automate tasks, enhance user experience, and deliver scalable, smart web applications.`,
-          },
+         
           {
             name: "Noor Fatima",
             role: "Social Media Marketing Manager",
