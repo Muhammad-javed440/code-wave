@@ -18,14 +18,14 @@ const page = () => {
           {
             name: "Muhammad Javed",
             role: "Agentic AI Engineer & UI Developer",
-            imgSrc: "/javed.png",
+            imgSrc: "/javed1.jpg",
             description: `An Agentic AI Engineer & Full Stack Web Developer designs intelligent, autonomous AI agents and builds complete web solutions. They integrate AI into frontend and backend systems to automate tasks, enhance user experience, and deliver scalable, smart web applications.`,
           },
          
           {
             name: "Noor Fatima",
             role: "Social Media Marketing Manager",
-            imgSrc: "/girl1.jpg",
+            imgSrc: "/noor1.jpg",
             description: `A Social Media Marketing Manager is responsible for growing a brands presence on social platforms like Instagram, Facebook, LinkedIn, Twitter (X), and TikTok. Their main goal is to attract followers, increase engagement, and turn viewers into customers.`,
           },
         ].map(({name, role, imgSrc, description}, idx) => (

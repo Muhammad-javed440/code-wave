@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script"; // ✅ Add this import
+import Analytics from "./components/Analytics"; // ✅ import the tracking component
 import "./globals.css";
 
 import Providers from "@/components/ui/authprovider/Providers";
@@ -61,7 +62,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
+                  
+                  <Analytics /> {/* ✅ fires PageView once per page load */}
+
           <Navbar />
+
           {children}
         </Providers>
       </body>
